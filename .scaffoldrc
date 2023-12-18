@@ -1,0 +1,16 @@
+# ex: ft=bash
+# Autogenarted by Scaffold Toolset on [December 18, 2023]
+# This is a shell script intended to be sourced
+SC_VERSION=1.1.1
+GIT_HOOKS_FOLDER=".githooks"
+DOC_PROJECT_NAME="std.sh"
+DOC_PROJECT_SUMMARY="Standard library for shell (bash/zsh)"
+LICENSE_TYPE="GNU General Public License v3.0"
+LICENSE_PATH="/home/alex/.local/share/scaffold/templates/license/gpl-3.0.txt.in"
+GIT_USERNAME="hinell"
+GIT_USEREMAIL="al.neodim@gmail.com"
+GIT_REPO_URL_HOST="github.com"
+GIT_REPO_URL_PATH="hinell/std.sh"
+GIT_REPO_URL_HTTPS="https://github.com/hinell/std.sh"
+GIT_REPO_URL_USER="git"
+GIT_REPO_URL_SCP="git@github.com:hinell/std.sh"

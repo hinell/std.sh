@@ -1,0 +1,151 @@
+#!/usr/bin/env -S zsh
+# File........: config
+# Summary.....: Install/Uninstall sourceable files
+# Created.....: December 18, 2023 
+# Authors.....: Alex A. Davronov <al.neodim@gmail.com> (2023-)
+# Repository..: N/A
+# Description.: 
+# Usage.......: Run in shell
+
+config-help(){
+cat <<EOL
+config COMMAND [OPTIONS]
+Install/uninstall script for std.sh
+
+COMMANDS
+
+ link		- link src/ content to \$HOME/.local/bin
+ install	- like link, but copy instead
+ uninstall	- remove installed files 
+ status		- list installed files
+
+OPTIONS
+ --user		- user-local install 
+
+EOL
+}
+
+## report installed files by using ls
+config-status(){
+	local 0="config"
+	local __PREFIX=${1:? prefix is required}
+	shift
+	local __FILES=($@)
+	ls -uhoa $(printf "${__PREFIX}/%s\n" ${__FILES[@]##src/})
+}
+
+## uninstall list of files 
+config-uninstall(){
+	local 0="config"
+	local __PREFIX=${1:? prefix is required}
+	shift
+	local __FILES=($@)
+		  __FILES=(${__FILES[@]##src/})
+	for FILE in ${__FILES[@]}; do
+		local __FILE_PATH="${__PREFIX}/${FILE}"
+		[[ -f "${__FILE_PATH}" ]] && rm -i ${__FILE_PATH}
+	done
+}
+
+config(){
+	local PREFIX=.
+	local -A __FLAGS_MAP=()
+	local __FLAGS_REST=()
+	local __FLAGS=()
+	local __REST=()
+
+	local __INSTALL_FILES=(src/*)
+	local __INSTALL_USER_LOCAL=false
+
+	local __INSTALL_SYSTEM_PREFIX=/usr/bin
+	local __INSTALL_USER_PREFIX=$HOME/.local/bin
+
+	while (( $# > 0 )); do
+		case ${1} in
+			(-v|--version)
+				# config-version
+				return
+			;;
+			(-h|--help)
+				# config-help
+				return
+			;;
+
+			(link)
+				[[ -d "${__INSTALL_USER_PREFIX}" ]] && mkdir -v "${__INSTALL_USER_PREFIX}"
+				shift
+				case "${1}" in
+					(--user)
+						__INSTALL_USER_LOCAL=true
+					;;
+				esac 
+				if ${__INSTALL_USER_LOCAL};
+				then
+					for file in ${__INSTALL_FILES[@]}; do
+						ln -f -s $(realpath $file) "${__INSTALL_USER_PREFIX}/"
+					done
+				else
+					for file in ${__INSTALL_FILES[@]}; do
+						ln -f -s $(realpath $file) "${__INSTALL_SYSTEM_PREFIX}/"
+					done
+				fi
+				config-status "${__INSTALL_USER_PREFIX}" ${__INSTALL_FILES[@]}
+				return
+			;;
+
+			(install)
+				[[ -d "${__INSTALL_USER_PREFIX}" ]] && mkdir -v "${__INSTALL_USER_PREFIX}"
+				shift
+				case "${1}" in
+					(--user)
+						__INSTALL_USER_LOCAL=true
+					;;
+				esac
+				if ${__INSTALL_USER_LOCAL};
+				then
+					install ${__INSTALL_FILES[@]} -t "${__INSTALL_USER_PREFIX}/"
+					config-status "${__INSTALL_USER_PREFIX}" ${__INSTALL_FILES[@]}
+				else
+					install ${__INSTALL_FILES[@]} -t "${__INSTALL_SYSTEM_PREFIX}/"
+					config-status "${__INSTALL_SYSTEM_PREFIX}" ${__INSTALL_FILES[@]}
+				fi
+				return
+			;;
+
+			(status)
+				config-status "${__INSTALL_USER_PREFIX}" ${__INSTALL_FILES[@]}
+				config-status "${__INSTALL_SYSTEM_PREFIX}" ${__INSTALL_FILES[@]}
+				return
+			;;
+
+			(uninstall)
+				config-uninstall "${__INSTALL_USER_PREFIX}" ${__INSTALL_FILES[@]}
+				config-uninstall "${__INSTALL_SYSTEM_PREFIX}" ${__INSTALL_FILES[@]}
+				return
+			;;
+
+			# (-*)
+			#   __FLAGS+=("$1")
+			# 	echo -e "${0}: $(tput setaf 1)error:$(tput op) unknown option: ${1}" >&2;
+			# 	return 1
+			# ;;
+			(*)
+				config-help
+				# If you are going to use __REST, remove break
+				# __REST+=("$1")
+				shift
+				break
+			;;
+			# switch.stub
+		esac
+	done;
+
+}
+
+# Run script only if it was directly invoked 
+if [[ ${ZSH_ARGZERO} == $0 ]];
+then
+	config "${@}"
+fi
+
+# ex: ft=zsh

@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+
+source "$(dirname ${0})/pre-commit.no-logs"
+no_logs '^[[:space:]]*declare -p(?' src/**/*.sh # lua: disallow print() expressions 
+# disallow logs end
+
+make -sr -C doc/
+git add doc/*.md 
+# hook end

@@ -1,0 +1,53 @@
+name: Bug
+description: File a bug report
+labels: ["bug"]
+assignees:
+  - hinell
+body:
+  - type: checkboxes
+    id: issue-trouble-is-read
+    attributes:
+      label: I've read TROUBLESHOOTING](../blob/main/doc/index.md#TROUBLESHOOTING) instructions in the docs
+      options:
+        - label: "Yes"
+          required: true
+  - type: textarea
+    id: issue-summary
+    attributes:
+      label: Summary
+      placeholder: "Be brief. Time is invaluable commodity that only few can afford"
+      description: "Describe the the issue you've experienced."
+    validations:
+      required: true
+  - type: textarea
+    id: issue-repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: How to reproduce an issue
+    validations:
+      required: false
+  - type: textarea
+    id: issue-env
+    attributes:
+      label: Versions
+      placeholder: "Specify all relevant VERSIONS"
+    validations:
+      required: false
+  - type: dropdown
+    id: OS
+    attributes:
+      label: Specify operating system/environment
+      options:
+        - Linux/Debian/Ubuntu
+        - Linux/Debian/Kubuntu
+        - Linxu/Archlinux
+        - Linux/NixOS
+        - Linux/Other
+        - BSD/FreeBSD
+        - BSD/Darwin/MacOS
+        - Windows
+        - VM/Windows WSL
+        - VM/Docker
+        - Other
+    validations:
+      required: true
